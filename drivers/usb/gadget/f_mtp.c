@@ -309,22 +309,7 @@ static void release_perflock_work_func(struct work_struct *data)
 	mtp_setup_perflock(false);
 }
 
-#define MTP_QOS_N_RATIO		15
 #define MTP_TRANSFER_EXPIRED	(jiffies + msecs_to_jiffies(5000))
-static void mtp_qos_enable(int qos_n)
-{
-	struct mtp_dev *dev = _mtp_dev;
-
-	if (qos_n) {
-		mtp_setup_perflock(true);
-		dev->timer_expired = qos_n * MTP_QOS_N_RATIO;
-		if (dev->timer_expired < 5000)
-			dev->timer_expired = 5000;
-		mod_timer(&dev->perf_timer,
-			jiffies + msecs_to_jiffies(dev->timer_expired));
-	} else
-		mtp_setup_perflock(false);
-}
 
 static void mtp_perf_lock_disable(unsigned long data)
 {
@@ -586,7 +571,6 @@ static ssize_t mtp_read(struct file *fp, char __user *buf,
 	if (count > MTP_BULK_BUFFER_SIZE) {
 		file_xfer_zlp_flag = 1;
 		
-		mtp_qos_enable(1);
 	}
 
 	while (count > 0) {
@@ -1162,7 +1146,6 @@ static long mtp_ioctl(struct file *fp, unsigned code, unsigned long value)
 		{
 			if (value > 0) {
 				printk(KERN_INFO "[USB][MTP] %s: ioctl MTP_SET_CPU_PERF, files = %d\n", __func__, (int)value);
-				mtp_qos_enable((int)value);
 			}
 			break;
 		}

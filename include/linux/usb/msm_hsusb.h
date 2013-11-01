@@ -23,10 +23,6 @@
 #include <linux/usb/gadget.h>
 #include <linux/usb/otg.h>
 #include <linux/wakelock.h>
-<<<<<<< HEAD
-#if defined(CONFIG_MACH_M7_UL) || defined(CONFIG_MACH_MONARUDO)
-=======
->>>>>>> parent of 394af22... defuxx usb, break all teh things
 #include <mach/board.h>
 #include <linux/pm_qos.h>
 #include <linux/hrtimer.h>
@@ -115,11 +111,6 @@ struct msm_otg_platform_data {
 	void (*setup_gpio)(enum usb_otg_state state);
 	int pmic_id_irq;
 	bool mhl_enable;
-<<<<<<< HEAD
-	bool disable_reset_on_disconnect;
-#if defined(CONFIG_MACH_M7_UL) || defined(CONFIG_MACH_MONARUDO)
-=======
->>>>>>> parent of 394af22... defuxx usb, break all teh things
 	char *ldo_3v3_name;
 	char *ldo_1v8_name;
 	char *vddcx_name;
@@ -128,10 +119,6 @@ struct msm_otg_platform_data {
 	bool enable_lpm_on_dev_suspend;
 	bool core_clk_always_on_workaround;
 	struct msm_bus_scale_pdata *bus_scale_table;
-<<<<<<< HEAD
-#if defined(CONFIG_MACH_M7_UL) || defined(CONFIG_MACH_MONARUDO)
-=======
->>>>>>> parent of 394af22... defuxx usb, break all teh things
 	int reset_phy_before_lpm;
 	void (*usb_uart_switch)(int uart);
 	int ldo_power_collapse;
@@ -175,12 +162,6 @@ struct msm_otg {
 	struct usb_phy phy;
 	struct msm_otg_platform_data *pdata;
 	int irq;
-<<<<<<< HEAD
-#if !defined(CONFIG_MACH_M7_UL) && !defined(CONFIG_MACH_MONARUDO)
-	int async_irq;
-#endif
-=======
->>>>>>> parent of 394af22... defuxx usb, break all teh things
 	struct clk *clk;
 	struct clk *pclk;
 	struct clk *phy_reset_clk;
@@ -203,12 +184,6 @@ struct msm_otg {
 #define A_BUS_SUSPEND	14
 #define A_CONN		15
 #define B_BUS_REQ	16
-<<<<<<< HEAD
-#if !defined(CONFIG_MACH_M7_UL) && !defined(CONFIG_MACH_MONARUDO)
-#define MHL	        17
-#endif
-=======
->>>>>>> parent of 394af22... defuxx usb, break all teh things
 	unsigned long inputs;
 	struct work_struct sm_work;
 	bool sm_work_pending;
@@ -218,26 +193,10 @@ struct msm_otg {
 	unsigned cur_power;
 	struct delayed_work chg_work;
 	struct delayed_work pmic_id_status_work;
-<<<<<<< HEAD
-#if !defined(CONFIG_MACH_M7_UL) && !defined(CONFIG_MACH_MONARUDO)
-	struct delayed_work check_ta_work;
-#endif
-	enum usb_chg_state chg_state;
-	enum usb_chg_type chg_type;
-#if defined(CONFIG_MACH_M7_UL) || defined(CONFIG_MACH_MONARUDO)
-	u8 dcd_retries;
-#else
-	unsigned dcd_time;
-#endif
-	struct wake_lock wlock;
-#if defined(CONFIG_MACH_M7_UL) || defined(CONFIG_MACH_MONARUDO)
-	struct wake_lock usb_otg_wlock;
-=======
 	enum usb_chg_state chg_state;
 	enum usb_chg_type chg_type;
 	u8 dcd_retries;
 	struct wake_lock wlock, usb_otg_wlock;
->>>>>>> parent of 394af22... defuxx usb, break all teh things
 	struct wake_lock cable_detect_wlock;
 	struct notifier_block usbdev_nb;
 	unsigned mA_port;
@@ -245,10 +204,6 @@ struct msm_otg {
 	unsigned long caps;
 	struct msm_xo_voter *xo_handle;
 	uint32_t bus_perf_client;
-<<<<<<< HEAD
-#if !defined(CONFIG_MACH_M7_UL) && !defined(CONFIG_MACH_MONARUDO)
-	bool mhl_enabled;
-#endif
 	/*
 	 * Allowing PHY power collpase turns off the HSUSB 3.3v and 1.8v
 	 * analog regulators while going to low power mode.
@@ -256,8 +211,6 @@ struct msm_otg {
 	 * power collapse since it doesn't have leakage currents while
 	 * turning off the power rails.
 	 */
-=======
->>>>>>> parent of 394af22... defuxx usb, break all teh things
 #define ALLOW_PHY_POWER_COLLAPSE	BIT(0)
 #define ALLOW_PHY_RETENTION		BIT(1)
 #define ALLOW_LPM_ON_DEV_SUSPEND	    BIT(2)
@@ -265,13 +218,6 @@ struct msm_otg {
 #define PHY_PWR_COLLAPSED		BIT(0)
 #define PHY_RETENTIONED			BIT(1)
 #define XO_SHUTDOWN			BIT(2)
-<<<<<<< HEAD
-#if !defined(CONFIG_MACH_M7_UL) && !defined(CONFIG_MACH_MONARUDO)
-#define CLOCKS_DOWN			BIT(3)
-#endif
-#if defined(CONFIG_MACH_M7_UL) || defined(CONFIG_MACH_MONARUDO)
-=======
->>>>>>> parent of 394af22... defuxx usb, break all teh things
 	struct work_struct notifier_work;
 	enum usb_connect_type connect_type;
 	int connect_type_ready;

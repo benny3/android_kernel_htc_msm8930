@@ -371,21 +371,6 @@ void DbgBuffer_printLog( const char * fmt, ...)
 { return; }
 #endif
 
-static ssize_t show_reg(struct device *dev, struct device_attribute *attr,
-             char *buf)
-{
-   unsigned long flags;
-   struct platform_device *pdev = container_of(dev, struct
-                           platform_device, dev);
-   struct msm_hs_port *msm_uport = &q_uart_port[pdev->id];
-
-   spin_lock_irqsave(&msm_uport->uport.lock, flags);
-   msm_hs_dump_register(&msm_uport->uport);
-   spin_unlock_irqrestore(&msm_uport->uport.lock, flags);
-   dump_uart_ringbuffer();
-   return 1;
-}
-
 static ssize_t show_clock(struct device *dev, struct device_attribute *attr,
 			  char *buf)
 {
@@ -433,7 +418,6 @@ static ssize_t set_clock(struct device *dev, struct device_attribute *attr,
 }
 
 static DEVICE_ATTR(clock, S_IWUSR | S_IRUGO, show_clock, set_clock);
-static DEVICE_ATTR(reg, S_IRUGO, show_reg, NULL);
 
 static inline unsigned int use_low_power_wakeup(struct msm_hs_port *msm_uport)
 {
@@ -627,7 +611,6 @@ static int __devexit msm_hs_remove(struct platform_device *pdev)
 	dev = msm_uport->uport.dev;
 
 	sysfs_remove_file(&pdev->dev.kobj, &dev_attr_clock.attr);
-	sysfs_remove_file(&pdev->dev.kobj, &dev_attr_reg.attr);
 	debugfs_remove(msm_uport->loopback_dir);
 
 	dma_unmap_single(dev, msm_uport->rx.mapped_cmd_ptr, sizeof(dmov_box),
@@ -1931,8 +1914,6 @@ static int msm_hs_check_clock_off(struct uart_port *uport)
 	if (msm_uport->pclk)
 		clk_disable_unprepare(msm_uport->pclk);
 
-	msm_hs_dump_register(uport);
-	DbgBuffer_printLog("%s: UART Clock OFF\n", __func__);
 	msm_uport->clk_state = MSM_HS_CLK_OFF;
 
 	spin_lock_irqsave(&uport->lock, flags);
@@ -2691,10 +2672,6 @@ static int __devinit msm_hs_probe(struct platform_device *pdev)
 	msm_uport->clk_off_delay = ktime_set(0, 1000000);  /* 1ms */
 
 	ret = sysfs_create_file(&pdev->dev.kobj, &dev_attr_clock.attr);
-	if (unlikely(ret))
-		return ret;
-
-	ret = sysfs_create_file(&pdev->dev.kobj, &dev_attr_reg.attr);
 	if (unlikely(ret))
 		return ret;
 
