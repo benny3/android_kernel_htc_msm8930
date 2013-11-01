@@ -1865,11 +1865,6 @@ static int a2xx_rb_init(struct adreno_device *adreno_dev,
 
 	cmds_gpu = rb->buffer_desc.gpuaddr + sizeof(uint)*(rb->wptr-19);
 
-	if(cmds == NULL || cmds_gpu == 0){
-		KGSL_PWR_ERR(rb->device,"cmds or cmds_gpu is NULL");
-		return;
-	}
-
 	GSL_RB_WRITE(cmds, cmds_gpu, cp_type3_packet(CP_ME_INIT, 18));
 	/* All fields present (bits 9:0) */
 	GSL_RB_WRITE(cmds, cmds_gpu, 0x000003ff);

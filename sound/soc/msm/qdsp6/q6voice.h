@@ -446,11 +446,7 @@ struct cvs_start_record_cmd {
 
 #define VSS_IVOCPROC_CMD_SET_DEVICE			0x000100C4
 
-<<<<<<< HEAD
-#define VSS_IVOCPROC_CMD_SET_DEVICE_V2		0x000112C6
-=======
 #define VSS_IVOCPROC_CMD_SET_DEVICE_V2			0x000112C6
->>>>>>> b8765aa... ASoC: msm: Add support for external EC reference point
 
 #define VSS_IVOCPROC_CMD_SET_VP3_DATA			0x000110EB
 
@@ -494,10 +490,7 @@ struct cvs_start_record_cmd {
 #define VOICE_CMD_GET_PARAM				0x00011007
 #define VOICE_EVT_GET_PARAM_ACK				0x00011008
 
-<<<<<<< HEAD
-=======
 /* Default AFE port ID. Applicable to Tx and Rx. */
->>>>>>> b8765aa... ASoC: msm: Add support for external EC reference point
 #define VSS_IVOCPROC_PORT_ID_NONE			0xFFFF
 
 struct vss_ivocproc_cmd_create_full_control_session_t {
@@ -520,30 +513,14 @@ struct vss_ivocproc_cmd_set_device_t {
 	uint32_t rx_topology_id;
 } __packed;
 
-<<<<<<< HEAD
-#define VSS_IVOCPROC_VOCPROC_MODE_EC_INT_MIXING 0x00010F7C
-
-=======
 /* Internal EC */
 #define VSS_IVOCPROC_VOCPROC_MODE_EC_INT_MIXING 0x00010F7C
 
 /* External EC */
->>>>>>> b8765aa... ASoC: msm: Add support for external EC reference point
 #define VSS_IVOCPROC_VOCPROC_MODE_EC_EXT_MIXING 0x00010F7D
 
 struct vss_ivocproc_cmd_set_device_v2_t {
 	uint16_t tx_port_id;
-<<<<<<< HEAD
-	
-	uint32_t tx_topology_id;
-	
-	uint16_t rx_port_id;
-	
-	uint32_t rx_topology_id;
-	
-	uint32_t vocproc_mode;
-	uint16_t ec_ref_port_id;
-=======
 	/* Tx device port ID to which the vocproc connects. */
 	uint32_t tx_topology_id;
 	/* Tx path topology ID. */
@@ -560,7 +537,6 @@ struct vss_ivocproc_cmd_set_device_v2_t {
 	/* Port ID to which the vocproc connects for receiving
 	 * echo cancellation reference signal.
 	 */
->>>>>>> b8765aa... ASoC: msm: Add support for external EC reference point
 } __packed;
 
 struct vss_ivocproc_cmd_register_calibration_data_t {

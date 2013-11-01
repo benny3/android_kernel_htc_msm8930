@@ -267,6 +267,7 @@ config MACH_VALENTE_WX
 config MACH_M4_UL
 	depends on ARCH_MSM8930
 	bool "M4_UL"
+	select FS_MSM_MIPI_DSI
 	help
 	  Support for the HTC M4_UL
 

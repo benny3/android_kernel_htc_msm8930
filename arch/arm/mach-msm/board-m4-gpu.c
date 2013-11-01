@@ -16,61 +16,11 @@
 #include <mach/kgsl.h>
 #include <mach/msm_bus_board.h>
 #include <mach/board.h>
-#include <mach/msm_iomap.h>
+#include <mach/msm_dcvs.h>
 #include <mach/socinfo.h>
 
 #include "devices.h"
 #include "board-m4.h"
-
-#ifdef CONFIG_MSM_DCVS
-static struct msm_dcvs_freq_entry grp3d_freq[] = {
-	{0, 900, 0, 0, 0},
-	{0, 950, 0, 0, 0},
-	{0, 950, 0, 0, 0},
-	{0, 1200, 1, 100, 100},
-};
-
-static struct msm_dcvs_core_info grp3d_core_info = {
-	.freq_tbl		= &grp3d_freq[0],
-	.num_cores		= 1,
-	.sensors		= (int[]){0},
-	.thermal_poll_ms	= 60000,
-	.core_param		= {
-		.core_type	= MSM_DCVS_CORE_TYPE_GPU,
-	},
-	.algo_param		= {
-		.disable_pc_threshold	= 0,
-		.em_win_size_min_us	= 100000,
-		.em_win_size_max_us	= 300000,
-		.em_max_util_pct	= 97,
-		.group_id		= 0,
-		.max_freq_chg_time_us	= 100000,
-		.slack_mode_dynamic	= 0,
-		.slack_time_min_us	= 39000,
-		.slack_time_max_us	= 39000,
-		.ss_win_size_min_us	= 1000000,
-		.ss_win_size_max_us	= 1000000,
-		.ss_util_pct		= 95,
-		.ss_no_corr_below_freq	= 0,
-	},
-
-	.energy_coeffs		= {
-		.leakage_coeff_a	= -17720,
-		.leakage_coeff_b	= 37,
-		.leakage_coeff_c	= 3329,
-		.leakage_coeff_d	= -277,
-
-		.active_coeff_a		= 2492,
-		.active_coeff_b		= 0,
-		.active_coeff_c		= 0
-	},
-
-	.power_param		= {
-		.current_temp	= 25,
-		.num_freq	= ARRAY_SIZE(grp3d_freq),
-	}
-};
-#endif /* CONFIG_MSM_DCVS */
 
 #ifdef CONFIG_MSM_BUS_SCALING
 static struct msm_bus_vectors grp3d_init_vectors[] = {
@@ -94,21 +44,6 @@ static struct msm_bus_vectors grp3d_low_vectors[] = {
 		.dst = MSM_BUS_SLAVE_EBI_CH0,
 		.ab = 0,
 		.ib = KGSL_CONVERT_TO_MBPS(1000),
-	},
-};
-
-static struct msm_bus_vectors grp3d_nominal_low_vectors[] = {
-	{
-		.src = MSM_BUS_MASTER_GRAPHICS_3D,
-		.dst = MSM_BUS_SLAVE_EBI_CH0,
-		.ab = 0,
-		.ib = KGSL_CONVERT_TO_MBPS(2000),
-	},
-	{
-		.src = MSM_BUS_MASTER_GRAPHICS_3D_PORT1,
-		.dst = MSM_BUS_SLAVE_EBI_CH0,
-		.ab = 0,
-		.ib = KGSL_CONVERT_TO_MBPS(2000),
 	},
 };
 
@@ -229,7 +164,6 @@ static struct kgsl_device_platform_data kgsl_3d0_pdata = {
 #endif
 	.iommu_data = kgsl_3d0_iommu_data,
 	.iommu_count = ARRAY_SIZE(kgsl_3d0_iommu_data),
-	.snapshot_address = MSM_GPU_SNAP_SHOT_3D0_PHYS,
 };
 
 struct platform_device device_kgsl_3d0 = {

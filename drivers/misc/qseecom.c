@@ -1506,7 +1506,6 @@ static long qseecom_ioctl(struct file *file, unsigned cmd,
 		return -ENODEV;
 	}
 
-	wait_for_completion_timeout(&pil_work_finished, msecs_to_jiffies(WAIT_PIL_TIMEOUT));
 	switch (cmd) {
 	case QSEECOM_IOCTL_REGISTER_LISTENER_REQ: {
 		pr_debug("ioctl register_listener_req()\n");
@@ -1516,8 +1515,6 @@ static long qseecom_ioctl(struct file *file, unsigned cmd,
 		wake_up_all(&data->abort_wq);
 		if (ret)
 			pr_err("failed qseecom_register_listener: %d\n", ret);
-		if (((struct qseecom_register_listener_req *)argp)->listener_id == 10)
-			complete_all(&qseecomd_finish);
 		break;
 	}
 	case QSEECOM_IOCTL_UNREGISTER_LISTENER_REQ: {
@@ -1584,7 +1581,6 @@ static long qseecom_ioctl(struct file *file, unsigned cmd,
 	}
 	case QSEECOM_IOCTL_LOAD_APP_REQ: {
 		pr_debug("ioctl load_app_req()\n");
-		wait_for_completion(&qseecomd_finish);
 		mutex_lock(&app_access_lock);
 		atomic_inc(&data->ioctl_count);
 		ret = qseecom_load_app(data, argp);

@@ -1406,7 +1406,6 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			return -EFAULT;
 		return dev->custom_ioctl(client, data.cmd, data.arg);
 	}
-	case ION_IOC_CLEAN_CACHES_OLD:
 	case ION_IOC_CLEAN_CACHES:
 	case ION_IOC_CLEAN_CACHES_COMPAT:
 		return client->dev->custom_ioctl(client,
@@ -1493,23 +1492,17 @@ static int ion_debug_find_buffer_owner(const struct ion_client *client,
 				       const struct ion_buffer *buf)
 {
 	struct rb_node *n;
-	int found = 0;
-
-	if (!mutex_trylock(&client->lock))
-		return 0;
 
 	for (n = rb_first(&client->handles); n; n = rb_next(n)) {
 		const struct ion_handle *handle = rb_entry(n,
 						     const struct ion_handle,
 						     node);
 		if (handle->buffer == buf) {
-			found = 1;
-			break;
+			return 1;
 		}
 	}
 
-	mutex_unlock(&client->lock);
-	return found;
+	return 0;
 }
 
 /**

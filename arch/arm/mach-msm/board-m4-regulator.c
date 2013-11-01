@@ -189,22 +189,6 @@ VREG_CONSUMERS(LVS1) = {
 	REGULATOR_SUPPLY("cam_vio",		"4-006c"),
 	REGULATOR_SUPPLY("dsi1_vddio",		"mipi_dsi.1"),
 };
-VREG_CONSUMERS(LVS6) = {
-	REGULATOR_SUPPLY("8921_lvs6",		NULL),
-};
-VREG_CONSUMERS(LVS7) = {
-	REGULATOR_SUPPLY("8921_lvs7",		NULL),
-	REGULATOR_SUPPLY("pll_vdd",		"pil_riva"),
-	REGULATOR_SUPPLY("lvds_vdda",		"lvds.0"),
-	REGULATOR_SUPPLY("dsi_pll_vddio",	"mdp.0"),
-};
-VREG_CONSUMERS(USB_OTG) = {
-	REGULATOR_SUPPLY("8921_usb_otg",	NULL),
-	REGULATOR_SUPPLY("vbus_otg",		"msm_otg"),
-};
-VREG_CONSUMERS(HDMI_MVS) = {
-	REGULATOR_SUPPLY("8921_hdmi_mvs",	NULL),
-};
 VREG_CONSUMERS(LVS2) = {
 	REGULATOR_SUPPLY("8038_lvs2",		NULL),
 	REGULATOR_SUPPLY("vcc_i2c",		"3-004a"),

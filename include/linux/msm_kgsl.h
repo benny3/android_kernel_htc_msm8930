@@ -564,13 +564,6 @@ struct kgsl_timestamp_event_fence {
  * IOCTL_KGSL_GETPROPERTY
  */
 
-#define KGSL_TIMESTAMP_EVENT_FENCE 2
-
-struct kgsl_timestamp_event_fence {
-	int fence_fd; 
-};
-
-
 #define IOCTL_KGSL_SETPROPERTY \
 	_IOW(KGSL_IOC_TYPE, 0x32, struct kgsl_device_getproperty)
 

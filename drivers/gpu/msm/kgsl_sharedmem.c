@@ -363,7 +363,6 @@ static void kgsl_page_alloc_free(struct kgsl_memdesc *memdesc)
 	if (memdesc->hostptr) {
 		vunmap(memdesc->hostptr);
 		kgsl_driver.stats.vmalloc -= memdesc->size;
-		kgsl_driver.stats.page_alloc_kernel -= memdesc->size;
 	}
 	if (memdesc->sg)
 		for_each_sg(memdesc->sg, sg, sglen, i){
@@ -417,7 +416,6 @@ static int kgsl_page_alloc_map_kernel(struct kgsl_memdesc *memdesc)
 					VM_IOREMAP, page_prot);
 		KGSL_STATS_ADD(memdesc->size, kgsl_driver.stats.vmalloc,
 				kgsl_driver.stats.vmalloc_max);
-		kgsl_driver.stats.page_alloc_kernel += memdesc->size;
 		vfree(pages);
 	}
 	if (!memdesc->hostptr)

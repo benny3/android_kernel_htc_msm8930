@@ -222,3 +222,4 @@ obj-$(CONFIG_VIDEO_NMI) += nmi/
 ccflags-y += -I$(srctree)/drivers/media/dvb/dvb-core
 ccflags-y += -I$(srctree)/drivers/media/dvb/frontends
 ccflags-y += -I$(srctree)/drivers/media/common/tuners
+endif

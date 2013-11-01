@@ -398,8 +398,6 @@ static ssize_t store_sampling_rate(struct kobject *a, struct attribute *b,
 	ret = sscanf(buf, "%u", &input);
 	if (ret != 1)
 		return -EINVAL;
-	if (input == dbs_tuners_ins.origin_sampling_rate)
-		return count;
 	update_sampling_rate(input);
 	return count;
 }

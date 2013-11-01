@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  */
 
-#include "kgsl.h"
+#include <mach/kgsl.h>
 #include "z180.h"
 #include "z180_reg.h"
 

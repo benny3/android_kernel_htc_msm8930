@@ -287,13 +287,6 @@ struct kgsl_snapshot_registers_list {
 	int count;
 };
 
-struct kgsl_snapshot_registers_list {
-	
-	struct kgsl_snapshot_registers *registers;
-	
-	int count;
-};
-
 int kgsl_snapshot_dump_regs(struct kgsl_device *device, void *snapshot,
 	int remain, void *priv);
 

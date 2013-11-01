@@ -520,6 +520,7 @@ static void __subsystem_restart(struct subsys_data *subsys)
 int subsystem_restart(const char *subsys_name)
 {
 	struct subsys_data *subsys;
+	char restart_reason[256];
 
 	if (!subsys_name) {
 		pr_err("Invalid subsystem name.\n");

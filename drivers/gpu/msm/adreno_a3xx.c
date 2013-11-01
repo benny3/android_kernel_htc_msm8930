@@ -89,17 +89,6 @@ const unsigned int a330_registers[] = {
 
 const unsigned int a330_registers_count = ARRAY_SIZE(a330_registers) / 2;
 
-/* Simple macro to facilitate bit setting in the gmem2sys and sys2gmem
- * functions.
- */
-
-const unsigned int a330_registers[] = {
-	0x1d0, 0x1d0, 0x1d4, 0x1d4, 0x453, 0x453,
-};
-
-const unsigned int a330_registers_count = ARRAY_SIZE(a330_registers) / 2;
-
-
 #define _SET(_shift, _val) ((_val) << (_shift))
 
 /*

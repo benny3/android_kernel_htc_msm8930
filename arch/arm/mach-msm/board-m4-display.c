@@ -17,26 +17,31 @@
 #include <linux/ioport.h>
 #include <linux/platform_device.h>
 #include <linux/bootmem.h>
+#include <linux/ion.h>
 #include <asm/mach-types.h>
-#include <mach/msm_bus_board.h>
 #include <mach/msm_memtypes.h>
 #include <mach/board.h>
 #include <mach/gpio.h>
 #include <mach/gpiomux.h>
-#include <mach/socinfo.h>
-#include <linux/ion.h>
 #include <mach/ion.h>
-#include <linux/regulator/consumer.h>
-
-#include "devices.h"
-#include "board-m4.h"
+#include <mach/msm_bus_board.h>
 #include <mach/panel_id.h>
 #include <mach/debug_display.h>
-#include <asm/system_info.h>
-#include <linux/leds.h>
+#include "devices.h"
+#include "board-m4.h"
+#include <linux/mfd/pm8xxx/pm8921.h>
+#include <mach/gpio.h>
+#include <mach/gpiomux.h>
 #include "../../../../drivers/video/msm/msm_fb.h"
 #include "../../../../drivers/video/msm/mipi_dsi.h"
 #include "../../../../drivers/video/msm/mdp4.h"
+#include <linux/i2c.h>
+#include <mach/msm_xo.h>
+
+#include <mach/socinfo.h>
+#include <linux/regulator/consumer.h>
+#include <asm/system_info.h>
+#include <linux/leds.h>
 #include <mach/perflock.h>
 
 #define RESOLUTION_WIDTH 768
@@ -1594,7 +1599,6 @@ static int m4_lcd_on(struct platform_device *pdev)
 {
 	struct msm_fb_data_type *mfd;
 	struct mipi_panel_info *mipi;
-	struct msm_panel_info *pinfo;
 
 	mfd = platform_get_drvdata(pdev);
 	if (!mfd)
@@ -1602,23 +1606,25 @@ static int m4_lcd_on(struct platform_device *pdev)
 	if (mfd->key != MFD_KEY)
 		return -EINVAL;
 
-	pinfo = &mfd->panel_info;
 	mipi  = &mfd->panel_info.mipi;
 
-	if (mfd->init_mipi_lcd == 0) {
-		mfd->init_mipi_lcd = 1;
-		return 0;
+	if (!first_init) {
+		if (mipi->mode == DSI_VIDEO_MODE) {
+			cmdreq.cmds = video_on_cmds;
+			cmdreq.cmds_cnt = video_on_cmds_count;
+		} else {
+			cmdreq.cmds = cmd_on_cmds;
+			cmdreq.cmds_cnt = cmd_on_cmds_count;
+		}
+		cmdreq.flags = CMD_REQ_COMMIT;
+		cmdreq.rlen = 0;
+		cmdreq.cb = NULL;
+
+		mipi_dsi_cmdlist_put(&cmdreq);
 	}
+	first_init = 0;
 
-	PR_DISP_INFO("Display On \n");
-
-	mipi_dsi_cmds_tx(&m4_panel_tx_buf, init_on_cmds,
-				init_on_cmds_count);
-
-	atomic_set(&lcd_power_state, 1);
-
-	PR_DISP_DEBUG("Init done\n");
-
+	PR_DISP_INFO("%s, %s, PWM A%d\n", __func__, ptype, pwmic_ver);
 	return 0;
 }
 
@@ -1633,95 +1639,61 @@ static int m4_lcd_off(struct platform_device *pdev)
 	if (mfd->key != MFD_KEY)
 		return -EINVAL;
 
+	resume_blk =1;
+
+	PR_DISP_INFO("%s\n", __func__);
 	return 0;
 }
 
 static int __devinit m4_lcd_probe(struct platform_device *pdev)
 {
-	struct msm_fb_data_type *mfd;
-	struct mipi_panel_info *mipi;
-	struct platform_device *current_pdev;
-	static struct mipi_dsi_phy_ctrl *phy_settings;
-	static char dlane_swap;
-
 	if (pdev->id == 0) {
 		mipi_m4_pdata = pdev->dev.platform_data;
-
-		if (mipi_m4_pdata
-			&& mipi_m4_pdata->phy_ctrl_settings) {
-			phy_settings = (mipi_m4_pdata->phy_ctrl_settings);
-		}
-
-		if (mipi_m4_pdata
-			&& mipi_m4_pdata->dlane_swap) {
-			dlane_swap = (mipi_m4_pdata->dlane_swap);
-		}
-
-		perf_lock_init(&m4_perf_lock, TYPE_PERF_LOCK, PERF_LOCK_HIGHEST, "m4");
 		return 0;
 	}
 
-	current_pdev = msm_fb_add_device(pdev);
+	msm_fb_add_device(pdev);
 
-	if (current_pdev) {
-		mfd = platform_get_drvdata(current_pdev);
-		if (!mfd)
-			return -ENODEV;
-		if (mfd->key != MFD_KEY)
-			return -EINVAL;
-
-		mipi  = &mfd->panel_info.mipi;
-
-		if (phy_settings != NULL)
-			mipi->dsi_phy_db = phy_settings;
-
-		if (dlane_swap)
-			mipi->dlane_swap = dlane_swap;
-	}
+	PR_DISP_INFO("%s\n", __func__);
 	return 0;
 }
 
 static void m4_display_on(struct msm_fb_data_type *mfd)
 {
-    
+	struct msm_fb_data_type *mfd;
 
-	mipi_dsi_op_mode_config(DSI_CMD_MODE);
+	mfd = platform_get_drvdata(pdev);    
 
 	cmdreq.cmds = display_on_cmds;
 	cmdreq.cmds_cnt = display_on_cmds_count;
 	cmdreq.flags = CMD_REQ_COMMIT;
+
 	cmdreq.rlen = 0;
 	cmdreq.cb = NULL;
+
 	mipi_dsi_cmdlist_put(&cmdreq);
 
 	PR_DISP_INFO("%s\n", __func__);
+	return 0;
 }
-
-DEFINE_LED_TRIGGER(bkl_led_trigger);
 
 static void m4_display_off(struct msm_fb_data_type *mfd)
 {
-	if (!is_perf_lock_active(&m4_perf_lock))
-		perf_lock(&m4_perf_lock);
+	struct msm_fb_data_type *mfd;
+
+	mfd = platform_get_drvdata(pdev);
 
 	cmdreq.cmds = display_off_cmds;
 	cmdreq.cmds_cnt = display_off_cmds_count;
 	cmdreq.flags = CMD_REQ_COMMIT;
+
 	cmdreq.rlen = 0;
 	cmdreq.cb = NULL;
+
 	mipi_dsi_cmdlist_put(&cmdreq);
 
-	if (wled_trigger_initialized)
-		led_trigger_event(bkl_led_trigger, 0);
-	else
-		PR_DISP_ERR("%s: wled trigger is not initialized!\n", __func__);
-
-	if (is_perf_lock_active(&m4_perf_lock))
-		perf_unlock(&m4_perf_lock);
-
-	atomic_set(&lcd_power_state, 0);
-
 	PR_DISP_INFO("%s\n", __func__);
+	return 0;
 }
 
 #ifdef CONFIG_MSM_CABC_VIDEO_ENHANCE
