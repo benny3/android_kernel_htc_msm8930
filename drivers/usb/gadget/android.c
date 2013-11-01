@@ -83,8 +83,6 @@ static int os_type;
 #endif
 
 #include <linux/usb/htc_info.h>
-#include "f_projector.c"
-#include "f_projector2.c"
 
 #ifdef CONFIG_PERFLOCK
 #include <mach/perflock.h>
